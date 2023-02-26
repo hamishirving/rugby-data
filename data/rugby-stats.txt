@@ -1,4 +1,7 @@
-﻿The team name is Bishops Stortford and they're playing in the season 2022-2023. On average, they score 25.89 points per game. So far this season, they have scored a total of 492 points. Their biggest winning margin was 24 points. Their longest winning streak so far this season was 4 games, which means they won 4 games in a row.
+﻿The team name is Bishops Stortford and they're playing in the season 2022-2023. On average, they score 25.89 points per game. So far this season, they have scored a total of 492 points over 19 games. Their biggest winning margin was 24 points. Their longest winning streak so far this season is 4 games, which means they won 4 games in a row.
+
+
+The following are stats related to each of the 22 players in the Bishops Stortford team:
 
 
 Joshua Stannard has scored 8 tries this season, scoring 40 points in total. He has played 16 games with a total of 1047 minutes. He has scored 0 conversions, 0 penalties, 0 drop goals and has had 0 yellow cards and 0 red cards.
@@ -67,8 +70,7 @@ Daniel Cole has not scored any tries this season, but has scored 44 points in to
 George Cullen has not scored any tries this season, but has scored 2 points in total. He has played 1 game with a total of 0 minutes. He has scored 1 conversion, 1 penalty, 0 drop goals and has had 0 yellow cards and 0 red cards.
 
 
-
-
+The following is more general information related to the game of rugby union, it is not specific to the Bishops Stortford team.
 
 
 Rugby union, commonly known simply as rugby, is a close-contact team sport that originated at Rugby School in the first half of the 19th century. Rugby is simply based on running with the ball in hand. In its most common form, a game is played between two teams of 15 players each, using an oval-shaped ball on a rectangular field called a pitch. The field has H-shaped goalposts at both ends.

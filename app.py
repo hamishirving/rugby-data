@@ -1,8 +1,7 @@
-from flask import Flask, render_template, request
-from gpt_index import SimpleDirectoryReader, GPTSimpleVectorIndex, LLMPredictor, PromptHelper, readers
+from flask import Flask, render_template, request, jsonify
+from gpt_index import SimpleDirectoryReader, GPTSimpleVectorIndex, LLMPredictor, PromptHelper
 from langchain import OpenAI
 import os
-from pathlib import Path
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -30,21 +29,27 @@ index = GPTSimpleVectorIndex(
     documents, llm_predictor=llm_predictor, prompt_helper=prompt_helper)
 index.save_to_disk('index')
 
-# Predict function to take query and generate the response from chat_rugby()
-
 # Flask app
 app = Flask(__name__)
 if __name__ == '__main__':
     app.run(debug=True)
 
+
+@app.route('/')
+def index():
+    return render_template('./index.html')
+
 # Endpoint for form submission
 
 
 @app.route('/predict', methods=['POST'])
+# Predict function to take query and generate the response via chat_rugby()
 def predict():
-    query = request.form['query']
-    response = chat_rugby(query)
-    return render_template('index.html', query=query, response=response)
+    query = request.json['query']
+    response = chat_rugby(
+        'For the Bishops Stortford team ' + query)
+    return jsonify({'response': response})
+
 
 # Function to generate the response
 
@@ -53,8 +58,3 @@ def chat_rugby(query):
     index = GPTSimpleVectorIndex.load_from_disk('index')
     response = index.query(query, response_mode="compact")
     return response.response
-
-
-@app.route('/', methods=['POST'])
-def index():
-    return render_template('./index.html')

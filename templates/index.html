@@ -1,29 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html data-theme="dark">
 	<head>
-		<title>Rugby Stats Bot</title>
+		<title>RugbyBot</title>
+		<meta content="width=device-width, initial-scale=1.0" name="viewport" />
 		<link
 			rel="stylesheet"
 			type="text/css"
-			href="{{ url_for('static', filename='style.css') }}"
+			href="{{url_for('static',filename='css/main.css')}}"
 		/>
 	</head>
-	<body>
-		<h1>Rugby Stats Bot</h1>
-		<form action="/predict" method="post" onclick="{e.preventDefault()}">
-			<input type="text" name="query" placeholder="Ask a question..." />
-			<button type="submit">Ask</button>
-		</form>
+	<body class="">
+		<main class="max-w-xl mx-auto h-screen">
+			<!-- Bottom bar -->
+			<div
+				class="btm-nav max-w-xl mx-auto shadow-[0px,-4px,8px,rgba(0,0,0,1)] z-20 backdrop-blur-lg bg-opacity-5"
+			>
+				<form
+					class="flex flex-row justify-between p-1 bg-opacity-0"
+					method="post"
+				>
+					<input
+						id="query"
+						class="input input-bordered w-full mr-2 bg-opacity-0"
+						type="text"
+						name="query"
+						placeholder="Ask a question..."
+					/>
+					<button class="btn" type="submit">Ask</button>
+				</form>
+			</div>
 
-		{% if query %}
-		<p>Loding</p>
-		{% elif response %}
-		<h2>You asked:</h2>
-		<p>{{ query }}</p>
-		<h2>The bot says:</h2>
-		<p>{{ response }}</p>
-		{% else %}
-		<p></p>
-		{% endif %}
+			<!-- Conversation body -->
+			<div
+				class="px-2 fixed left-0 right-0 top-0 bottom-[64px] z-10 w-full max-w-xl mx-auto"
+			>
+				<div id="conversation" class="h-full py-4 overflow-y-auto"></div>
+			</div>
+		</main>
+
+		<script>
+			const form = document.querySelector('form');
+			const queryInput = document.getElementById('query');
+			const conversationDiv = document.getElementById('conversation');
+			const botName = 'RugbyBot';
+			const authorName = 'Hamish';
+			queryInput.focus();
+
+			// Create new chat bubble, used either from history or newly created queries
+			function createChatBubble(value, className, author) {
+				const newNode = document.createElement('div');
+				newNode.className = `chat ${className}`;
+				newNode.innerHTML = `
+            <div class="chat-bubble text-sm">${value}</div>
+            <div class="chat-footer text-xs opacity-60">${author}</div>
+          `;
+				conversationDiv.appendChild(newNode);
+				conversationDiv.scrollTop = conversationDiv.scrollHeight;
+			}
+
+			let existingHistory;
+
+			function getHistory() {
+				// Get the history array from localStorage or initialize an empty array
+				existingHistory = JSON.parse(localStorage.getItem('history')) || [];
+				// Create chat bubbles for each query & response
+				existingHistory.forEach((item) => {
+					createChatBubble(item.query, 'chat-start', authorName);
+					createChatBubble(item.response, 'chat-end', botName);
+				});
+			}
+
+			window.onload = function () {
+				getHistory();
+			};
+
+			// Handle form submit
+			form.addEventListener('submit', (event) => {
+				event.preventDefault();
+
+				const query = queryInput.value;
+				createChatBubble(query, 'chat-start', authorName);
+				queryInput.value = '';
+
+				fetch('/predict', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ query }),
+				})
+					.then((response) => response.json())
+					.then((data) => {
+						createChatBubble(data.response, 'chat-end', botName);
+						// Build history to store in local storage
+						const newHistoryItem = { query: query, response: data.response };
+						const updatedHistory = [...existingHistory, newHistoryItem];
+						localStorage.setItem('history', JSON.stringify(updatedHistory));
+					})
+					.catch((error) => {
+						console.error(error);
+					});
+			});
+		</script>
 	</body>
 </html>
