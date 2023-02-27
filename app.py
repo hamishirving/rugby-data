@@ -46,15 +46,7 @@ def index():
 # Predict function to take query and generate the response via chat_rugby()
 def predict():
     query = request.json['query']
-    response = chat_rugby(
-        'For the Bishops Stortford team ' + query)
-    return jsonify({'response': response})
-
-
-# Function to generate the response
-
-
-def chat_rugby(query):
     index = GPTSimpleVectorIndex.load_from_disk('index')
-    response = index.query(query, response_mode="compact")
-    return response.response
+    response = index.query(
+        'For the Bishops Stortford team ' + query, response_mode="compact")
+    return jsonify({'response': response.response})

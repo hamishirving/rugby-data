@@ -25,7 +25,7 @@ Node dependencies
 
 ```bash
 yarn
-*/or
+# or
 npm install
 ```
 
