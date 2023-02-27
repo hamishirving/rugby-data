@@ -2273,6 +2273,10 @@ html {
   margin-right: 0.5rem;
 }
 
+.mt-1 {
+  margin-top: 0.25rem;
+}
+
 .flex {
   display: flex;
 }
@@ -2305,20 +2309,8 @@ html {
   overflow-y: auto;
 }
 
-.overflow-y-scroll {
-  overflow-y: scroll;
-}
-
 .bg-opacity-0 {
   --tw-bg-opacity: 0;
-}
-
-.bg-opacity-10 {
-  --tw-bg-opacity: 0.1;
-}
-
-.bg-opacity-90 {
-  --tw-bg-opacity: 0.9;
 }
 
 .bg-opacity-5 {
@@ -2349,8 +2341,9 @@ html {
   line-height: 1rem;
 }
 
-.opacity-60 {
-  opacity: 0.6;
+.text-gray-600 {
+  --tw-text-opacity: 1;
+  color: rgb(75 85 99 / var(--tw-text-opacity));
 }
 
 .shadow-\[0px\2c -4px\2c 8px\2c rgba\(0\2c 0\2c 0\2c 1\)\] {
