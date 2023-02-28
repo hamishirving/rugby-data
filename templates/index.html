@@ -31,7 +31,26 @@
 						name="query"
 						placeholder="Ask a question..."
 					/>
-					<button class="btn" type="submit">Ask</button>
+					<button
+						class="btn btn-square transition duration-150"
+						id="submit"
+						type="submit"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 24 24"
+							id="submitIcon"
+							class="text-current fill-gray-400"
+						>
+							<g>
+								<path
+									d="M14.619,23a1.05,1.05,0,0,1-.938-.579L10.572,16.2a1.052,1.052,0,0,1,.075-1.066l5.02-6.8-6.8,5.018a1.05,1.05,0,0,1-1.065.075L1.579,10.318A1.048,1.048,0,0,1,1.685,8.4L21.59,1.064a1.047,1.047,0,0,1,1.345,1.345L15.6,22.315a1.046,1.046,0,0,1-.925.683Z"
+								></path>
+							</g>
+						</svg>
+					</button>
 				</form>
 			</div>
 
@@ -46,6 +65,8 @@
 		<script>
 			const form = document.querySelector('form');
 			const queryInput = document.getElementById('query');
+			const submitBtn = document.getElementById('submit');
+			const submitIcon = document.getElementById('submitIcon');
 			const conversationDiv = document.getElementById('conversation');
 			const botName = 'RugbyBot';
 			const authorName = 'Hamish';
@@ -82,7 +103,8 @@
 			// Handle form submit
 			form.addEventListener('submit', (event) => {
 				event.preventDefault();
-
+				submitIcon.style.display = 'none';
+				submitBtn.classList.add('loading');
 				const query = queryInput.value;
 				createChatBubble(query, 'chat-start', authorName);
 				queryInput.value = '';
@@ -95,6 +117,8 @@
 					.then((response) => response.json())
 					.then((data) => {
 						createChatBubble(data.response, 'chat-end', botName);
+						submitBtn.classList.remove('loading');
+						submitIcon.style.display = 'block';
 						// Build history to store in local storage
 						const newHistoryItem = { query: query, response: data.response };
 						const updatedHistory = [...existingHistory, newHistoryItem];
@@ -102,6 +126,9 @@
 					})
 					.catch((error) => {
 						console.error(error);
+						createChatBubble(error, 'chat-end text-red-600', botName);
+						submitBtn.classList.remove('loading');
+						submitIcon.style.display = 'block';
 					});
 			});
 		</script>
