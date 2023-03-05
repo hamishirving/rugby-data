@@ -24,9 +24,9 @@ llm_predictor = ChatGPTLLMPredictor()
 # Define prompt_helper and settings
 max_input_size = 4096
 num_outputs = 1
-max_chunk_overlap = 20
-embedding_limit = 1000
-chunk_size_limit = 135
+max_chunk_overlap = 30
+embedding_limit = 5000
+chunk_size_limit = 3500  # 140
 prompt_helper = PromptHelper(
     max_input_size, num_outputs, max_chunk_overlap, embedding_limit, chunk_size_limit)
 
@@ -35,7 +35,7 @@ directory_path = './data'
 documents = SimpleDirectoryReader(directory_path).load_data()
 
 # Create the index from the data
-index = GPTListIndex(
+index = GPTSimpleVectorIndex(
     documents, llm_predictor=llm_predictor, prompt_helper=prompt_helper)
 index.save_to_disk('index.json')
 
@@ -56,7 +56,7 @@ def index():
 # Predict function to take user query and generate the response from the index
 def predict():
     query = request.json['query']
-    index = GPTListIndex.load_from_disk('index.json')
+    index = GPTSimpleVectorIndex.load_from_disk('index.json')
     response = index.query(
-        'For the Bishops Stortford team ' + query, similarity_top_k=2, mode="embedding")
+        query, mode="embedding")
     return jsonify({'response': response.response})
