@@ -1,5 +1,6 @@
+from gpt_index.langchain_helpers.chatgpt import ChatGPTLLMPredictor
 from flask import Flask, render_template, request, jsonify
-from gpt_index import SimpleDirectoryReader, GPTSimpleVectorIndex, LLMPredictor, PromptHelper
+from gpt_index import SimpleDirectoryReader, GPTSimpleVectorIndex, GPTListIndex, LLMPredictor, PromptHelper
 from langchain import OpenAI
 import os
 
@@ -8,26 +9,35 @@ load_dotenv()
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
+# use ChatGPT [beta]
+
+llm_predictor = ChatGPTLLMPredictor()
+
+#
+# Before ChatGPT API was released...
+#
 # Define the LLM
-llm_predictor = LLMPredictor(llm=OpenAI(
-    temperature=0, model_name="text-davinci-003"))
+# llm_predictor = LLMPredictor(llm=OpenAI(
+#     temperature=0, model_name="text-davinci-003"))
+
 
 # Define prompt_helper and settings
 max_input_size = 4096
-num_outputs = 256
-max_chunk_overlap = 20
-chunk_size_limit = 600
+num_outputs = 1
+max_chunk_overlap = 30
+embedding_limit = 5000
+chunk_size_limit = 3500  # 140
 prompt_helper = PromptHelper(
-    max_input_size, num_outputs, max_chunk_overlap, chunk_size_limit)
+    max_input_size, num_outputs, max_chunk_overlap, embedding_limit, chunk_size_limit)
 
-# Load data to train the model
+# Load data
 directory_path = './data'
 documents = SimpleDirectoryReader(directory_path).load_data()
 
 # Create the index from the data
 index = GPTSimpleVectorIndex(
     documents, llm_predictor=llm_predictor, prompt_helper=prompt_helper)
-index.save_to_disk('index')
+index.save_to_disk('index.json')
 
 # Flask app
 app = Flask(__name__)
@@ -43,10 +53,10 @@ def index():
 
 
 @app.route('/predict', methods=['POST'])
-# Predict function to take query and generate the response via chat_rugby()
+# Predict function to take user query and generate the response from the index
 def predict():
     query = request.json['query']
-    index = GPTSimpleVectorIndex.load_from_disk('index')
+    index = GPTSimpleVectorIndex.load_from_disk('index.json')
     response = index.query(
-        'For the Bishops Stortford team ' + query, response_mode="compact")
+        query, mode="embedding")
     return jsonify({'response': response.response})
